@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 
@@ -15,11 +15,7 @@ const Contact = () => {
     try {
       const { data } = await axios.post(
         "http://localhost:4000/send/mail",
-        {
-          name,
-          email,
-          message,
-        },
+        { name, email, message },
         {
           withCredentials: true,
           headers: { "Content-Type": "application/json" },
@@ -29,10 +25,11 @@ const Contact = () => {
       setEmail("");
       setMessage("");
       toast.success(data.message);
-      setLoading(false);
     } catch (error) {
+      const errorMessage = error.response?.data?.message || "Something went wrong. Please try again.";
+      toast.error(errorMessage);
+    } finally {
       setLoading(false);
-      toast.error(error.response.data.message);
     }
   };
 
@@ -46,6 +43,7 @@ const Contact = () => {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
           />
         </div>
         <div>
@@ -54,6 +52,7 @@ const Contact = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
         <div>
@@ -62,6 +61,7 @@ const Contact = () => {
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            required
           />
         </div>
         <button
